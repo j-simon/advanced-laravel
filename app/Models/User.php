@@ -42,4 +42,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    //user model
+    public function oauth()
+    {
+        return $this->hasOne('App\Models\SocialAuth');
+    }
 }
