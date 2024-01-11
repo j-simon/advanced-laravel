@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,7 +14,11 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function (Request $request) {
+
+    //Log::channel('slack')->info("IP-Adresse: ".$request->ip());
+    //logger()->channel('daily')->critical("IP-Adresse: ".request()->ip());
+
     return view('welcome');
 });
 
@@ -33,3 +38,24 @@ Route::get('/seite', function ( Request $request) {
     logger()->channel('statistics')->info( $request);
 })->middleware(['vorher','nachher']);
 
+
+// uebung_02
+Route::get("/uebung_02",function(){
+    return view("uebung_02");
+});
+
+Route::post("/egg",function () {
+    return "Der normale Inhalt!";  
+})->middleware(("easteregg"));
+
+// uebung_03
+Route::get("/onion",function () {
+   return view("uebung_03");
+})->middleware("before.Layer","after.Layer");
+
+
+// Dies die User-Authentifizierungslogik, mit dem laravel/ui installiert
+use Illuminate\Support\Facades\Auth;
+Auth::routes();
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Ende

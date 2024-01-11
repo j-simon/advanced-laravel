@@ -67,6 +67,9 @@ class Kernel extends HttpKernel
         'statistic' => \App\Http\Middleware\Statistics::class,
         'vorher' => \App\Http\Middleware\BeforeHTMLInjector::class,
         'nachher' => \App\Http\Middleware\AfterHTMLInjector::class,
-       
+        'easteregg' => \App\Http\Middleware\EasterEgg::class,
+
+        'before.Layer' => \App\Http\Middleware\BeforeLayer::class,
+        'after.Layer' => \App\Http\Middleware\AfterLayer::class,
     ];
 }
