@@ -32,6 +32,9 @@ class LoginController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
+    // entweder so, oder im constructor
+     protected $maxAttempts = 3; // Default is 3
+     protected $decayMinutes = 10; // Default is 600
     /**
      * Create a new controller instance.
      *
@@ -40,24 +43,32 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+        //$this->maxAttempts = '2';
+        //$this->decayMinutes = '30'; // 1800 Sekunden
     }
 
-    public function redirectToProvider() {
-        return Socialite::driver('github')->redirect();
+    
+    // von Laravel zu dem Socialite Provider
+    public function redirectToProvider($provider) {
+        
+        return Socialite::driver($provider)->redirect();
         
     }
+  
 
-    public function handleProviderCallback(){
-        $oauthUser = Socialite::driver('github')->user();
+    // von Socialite Provider kommt das OK oder das nicht OK zurück zu uns(Laravel)
+    public function handleProviderCallback($provider){
+        $oauthUser = Socialite::driver($provider)->user();
 
         // integration in Laravel
-        $oauthUser = $this->findOrCreateUser($oauthUser, 'github');
+        $oauthUser = $this->findOrCreateUser($oauthUser, $provider);
     
         // aktiv login!
         Auth::login($oauthUser, true);
     
         return redirect($this->redirectTo);
     }
+
 
     public function findOrCreateUser($oauthUser, $provider)
     {

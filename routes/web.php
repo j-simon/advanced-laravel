@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Log;
 
 Route::get('/', function (Request $request) {
     if (auth()->user())
-        echo "Hallo ".auth()->user()->name;
+        echo "Hallo ".auth()->user()->name." user->id=".auth()->user()->id.", du bist angemeldet!";
     else
-        echo "Hallo!";
+        echo "Hallo, du bist <b style='color:red'>NICHT</b> angemeldet!";
 
     //Log::channel('slack')->info("IP-Adresse: ".$request->ip());
     //logger()->channel('daily')->critical("IP-Adresse: ".request()->ip());
@@ -61,7 +61,6 @@ Route::get("/onion", function () {
 // uebung_05
 // Dies die User-Authentifizierungslogik, mit dem laravel/ui installiert
 use Illuminate\Support\Facades\Auth;
-
 Auth::routes();
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 // Ende
@@ -72,10 +71,11 @@ Route::get("/secret",function(){
 })->middleware("auth");
 
 // github
-Route::get("/auth/github",[App\Http\Controllers\Auth\LoginController::class, 'redirectToProvider']);
-Route::get("/auth/github/callback",[App\Http\Controllers\Auth\LoginController::class, 'handleProviderCallback']);
-// client id 
-// 79aa9cd4fa94d0fbfc4b
+// Route::get("/auth/github",[App\Http\Controllers\Auth\LoginController::class, 'redirectToProvider']);
+// Route::get("/auth/github/callback",[App\Http\Controllers\Auth\LoginController::class, 'handleProviderCallback']);
 
-// secret
-// e9f2875d34dee8faa2d465dbde925528c1a4ba40
+
+// irgendeinen socialite provider
+// hier wird der Anmeldevorgang ausgelöst 
+Route::get("/auth/{provider}",[App\Http\Controllers\Auth\LoginController::class, 'redirectToProvider']);
+Route::get("/auth/{provider}/callback",[App\Http\Controllers\Auth\LoginController::class, 'handleProviderCallback']);
