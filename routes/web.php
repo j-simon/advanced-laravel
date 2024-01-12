@@ -14,17 +14,6 @@ use Illuminate\Support\Facades\Log;
 |
 */
 
-Route::get('/', function (Request $request) {
-    if (auth()->user())
-        echo "Hallo ".auth()->user()->name." user->id=".auth()->user()->id.", du bist angemeldet!";
-    else
-        echo "Hallo, du bist <b style='color:red'>NICHT</b> angemeldet!";
-
-    //Log::channel('slack')->info("IP-Adresse: ".$request->ip());
-    //logger()->channel('daily')->critical("IP-Adresse: ".request()->ip());
-
-    return view('welcome');
-});
 
 // MVC Impressum-Seite:
 // hier wird unsichtbar in einer before middleware
@@ -79,3 +68,66 @@ Route::get("/secret",function(){
 // hier wird der Anmeldevorgang ausgelöst 
 Route::get("/auth/{provider}",[App\Http\Controllers\Auth\LoginController::class, 'redirectToProvider']);
 Route::get("/auth/{provider}/callback",[App\Http\Controllers\Auth\LoginController::class, 'handleProviderCallback']);
+
+
+Route::get("/produkte_anlegen", function(){
+
+    $post=new \App\Models\Post;
+    $post->title="Dies ist ein Kühschrank";
+    $post->text="Dieser kostet 250 EURO";
+    $post->active=true;
+    $post->user_id=2;
+    $post->save();
+
+    \App\Models\Post::create(
+        [
+            'title'=>"Mikrowelle" ,
+            "text" => "Schöne Mikrowelle für 100 EURO",
+            "user_id" => 2,
+            "active" => true
+        ]);
+
+        \App\Models\Post::create(
+            [
+                'title'=>"Buch" ,
+                "text" => "Schönes Buch für 10 EURO",
+                "user_id" => 1,
+                "active" => true
+            ]);
+});
+
+
+
+Route::get('/', function (Request $request) {
+    if (auth()->user())
+        echo "Hallo ".auth()->user()->name." user->id=".auth()->user()->id.", du bist angemeldet!";
+    else
+        echo "Hallo, du bist <b style='color:red'>NICHT</b> angemeldet!";
+
+    //Log::channel('slack')->info("IP-Adresse: ".$request->ip());
+    //logger()->channel('daily')->critical("IP-Adresse: ".request()->ip());
+
+    $posts=\App\Models\Post::all();
+    return view('welcome',compact("posts"));
+});
+
+use Illuminate\Support\Facades\Gate;
+Route::get('post/{post}/toggle', function (App\Models\Post $post) {
+    //     2b Gates  
+    //     Die Route mit der Logik, die ja unsichtbar ist,
+    //     muss gegen falschen user geschützt werden
+    // 
+    if (Gate::allows('toggle-post', $post)) {
+        // User is authorized to toggle the post.
+        $post->toggleActivity();
+        return redirect('/');
+    } else {
+        // User is not authorized to update the post.
+        return redirect('/');
+    }
+
+    
+    
+});
+
+
