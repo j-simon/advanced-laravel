@@ -832,20 +832,20 @@
 
 <body class="antialiased">
 
-    <br><a href="/produkte_anlegen">Produkte anlegen für die Gates/Policies</a><br>
+    <br><br><a href="/produkte_anlegen">Produkte anlegen für die Gates/Policies</a><br>
     <br>
-    <h4>Posts</h4>
-   
+    <h4>Posts - mit Gate geschützt - aktiv Status kann nur vom Besitzer geändert werden</h4>
+
     <table>
-        <th>
-           <tr>
-        <td>Titel</td>
-        <td>Beschreibung</td>
-        <td>Username Name</td>
-        <td style="text-align:right">User ID</td>
-        <td style="text-align:right">aktiv</td>
-           </tr>
-        </th>
+
+        <tr>
+            <th>Titel</th>
+            <th>Beschreibung</th>
+            <th>Username Name</th>
+            <th>User ID</th>
+            <th style="padding-left:15px;">aktiv</th>
+        </tr>
+
 
         @foreach($posts as $post)
         <tr>
@@ -853,14 +853,18 @@
             <td>{{$post->text}}</td>
             <td>{{$post->user->name}}</td>
             <td style="text-align:right">{{$post->user->id}}</td>
-            <td style="text-align:right"><b>
-                {{--  2a. Gates  
+            <td style="text-align:left"><b>
+                    {{-- 2a. Gates
                     Die Optik muss gegeben die Logik des Gates abgelbildet werden
                     anzeigen oder nicht anzeigen
-                --}}
-                @can('toggle-post', $post)
-                    <a href="/post/{{$post->id}}/toggle">{{$post->active}}</b> kann geändert werden</a>
-                @endcan
+                    --}}
+                    <div style="padding-left:15px;">
+                        {{$post->active}} @if($post->active) ✅ @else ❌ @endif
+                    @can('toggle-post', $post)
+                    <a  href="/post/{{$post->id}}/toggle"></b> kann geändert
+                werden</a>
+                    @endcan
+                    </div>
             </td>
 
 
@@ -868,6 +872,8 @@
         @endforeach
     </table>
 
+    <br>
+  
     <div
         class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white">
         @if (Route::has('login'))

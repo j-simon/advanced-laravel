@@ -100,7 +100,7 @@ Route::get("/produkte_anlegen", function(){
 
 Route::get('/', function (Request $request) {
     if (auth()->user())
-        echo "Hallo ".auth()->user()->name." user->id=".auth()->user()->id.", du bist angemeldet!";
+        echo "Hallo ".auth()->user()->name.": <b style='color:green'>user->id=".auth()->user()->id."</b>, du bist angemeldet!";
     else
         echo "Hallo, du bist <b style='color:red'>NICHT</b> angemeldet!";
 
