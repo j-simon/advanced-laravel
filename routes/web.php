@@ -69,7 +69,7 @@ Route::get("/secret",function(){
 Route::get("/auth/{provider}",[App\Http\Controllers\Auth\LoginController::class, 'redirectToProvider']);
 Route::get("/auth/{provider}/callback",[App\Http\Controllers\Auth\LoginController::class, 'handleProviderCallback']);
 
-
+// uebung_08
 Route::get("/produkte_anlegen", function(){
 
     $post=new \App\Models\Post;
