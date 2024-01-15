@@ -116,6 +116,8 @@ Route::get('/', function (Request $request) {
     //logger()->channel('daily')->critical("IP-Adresse: ".request()->ip());
 
     $posts = \App\Models\Post::all();
+    //$posts = \App\Models\Post::with('user')->get(); // eager loading -> N+1 Problem wird verbessert!
+    
     return view('welcome_new', compact("posts"));
 });
 

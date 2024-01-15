@@ -9,15 +9,17 @@ class Post extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title','text','user_id','active'];
+    protected $fillable = ['title', 'text', 'user_id', 'active'];
+
     
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(\App\Models\User::class);
     }
-    
+
     public function toggleActivity()
-{
-    $this->active = !$this->active;
-    $this->save();
-}
+    {
+        $this->active = !$this->active;
+        $this->save();
+    }
 }

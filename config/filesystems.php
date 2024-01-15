@@ -44,6 +44,17 @@ return [
             'throw' => false,
         ],
 
+        'sftp' => [
+            'driver' => 'sftp',
+            'host' => 'jenssi.lima-ftp.de',
+           // 'port' => 21,
+            'username' => 'jenssi',
+            'password' => "",
+            //'privateKey' => 'path/to/or/contents/of/privatekey',
+             'root' => '/default-website/test',
+            //'timeout' => 10,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
