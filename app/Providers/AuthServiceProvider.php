@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Illuminate\Support\Facades\Gate;
+use App\Policies\UserPolicy;
+use Illuminate\Auth\Access\Response;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -16,6 +19,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         //
+        User::class => UserPolicy::class,
     ];
 
     /**
@@ -23,11 +27,25 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->registerPolicies();
         //
         // 1. user zu resource unter einem begriffe der zu kontrolierenden tätigkeit anlegen
         // toggle zu post resource
         Gate::define('toggle-post', function (\App\Models\User $user, \App\Models\Post $post) {
             return $post->user->is($user); //return $user->id === $post->user_id;
         });
+
+        // uebung_11:
+        Gate::before(function ($user, $ability) {
+            if ($user->abilities()->contains($ability)) {
+                return true;
+            }
+        });
+
+        // Gate::define('delete-user', function (\App\Models\User $auth, \App\Models\User $user) {
+        //     return $auth->is($user)
+        //     ? Response::allow()
+        //     : Response::deny('You cannot delete this User because its not yours');
+        // });
     }
 }

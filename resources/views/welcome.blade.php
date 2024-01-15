@@ -855,7 +855,7 @@
             <td style="text-align:right">{{$post->user->id}}</td>
             <td style="text-align:left"><b>
                     {{-- 2a. Gates
-                    Die Optik muss gegeben die Logik des Gates abgelbildet werden
+                    Die Optik muss gegeben die Logik des Gates abgebildet werden
                     anzeigen oder nicht anzeigen
                     --}}
                     <div style="padding-left:15px;">

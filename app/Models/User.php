@@ -49,8 +49,23 @@ class User extends Authenticatable
         return $this->hasOne('App\Models\SocialAuth');
     }
 
-public function post(){
-    $this->hasMany(\App\Models\Post::class);
-}
+    public function post()
+    {
+        $this->hasMany(\App\Models\Post::class);
+    }
 
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class)->withTimestamps();
+    }
+
+    public function abilities()
+    {
+        return $this->roles->map->abilities->flatten()->pluck('name')->unique();
+    }
+
+    public function assignRole($role)
+    {
+        return $this->roles()->syncWithoutDetaching($role);
+    }
 }

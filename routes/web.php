@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Log;
 */
 
 
+use App\Http\Controllers\UserController;
+Route::resource('users', UserController::class);
+
+
 // MVC Impressum-Seite:
 // hier wird unsichtbar in einer before middleware
 // der Aufruf der Seite in der /storage/logs/laravel-statistik.log 
@@ -108,7 +112,7 @@ Route::get('/', function (Request $request) {
     //logger()->channel('daily')->critical("IP-Adresse: ".request()->ip());
 
     $posts=\App\Models\Post::all();
-    return view('welcome',compact("posts"));
+    return view('welcome_new',compact("posts"));
 });
 
 use Illuminate\Support\Facades\Gate;
@@ -117,17 +121,57 @@ Route::get('post/{post}/toggle', function (App\Models\Post $post) {
     //     Die Route mit der Logik, die ja unsichtbar ist,
     //     muss gegen falschen user geschützt werden
     // 
-    if (Gate::allows('toggle-post', $post)) {
+  /*   if (Gate::allows('toggle-post', $post)) {
         // User is authorized to toggle the post.
         $post->toggleActivity();
         return redirect('/');
     } else {
         // User is not authorized to update the post.
         return redirect('/');
-    }
+    } */
 
+    // uebung_11:
+    if (Gate::none(['toggle-post', 'always-toggle-post'], $post)) {
+        abort(403);
+    }
+    $post->toggleActivity();
+
+    return redirect('/');
     
+    // Route::get('user/{user}/delete', function (App\Models\User $user) {
+    //     if (Gate::none(['delete-user', 'delete-other-users'], $user)) {
+    //         abort(403);
+    //     }
+    //     $user->oauth()->delete();
+    //     $user->delete();
+    
+    //     return redirect('/');
+    // });
     
 });
+
+
+
+
+// uebung_12
+// eine Route für das Upload-Formular
+// Route::get('/upload', function () {
+//     return view('upload');
+// });
+
+// // und noch eine für die POST-Action:
+// Route::post('upload', function (Request $request) {
+
+//     if ($request->file('image')->isValid()) {
+
+//         $request->validate([
+//             'image' => 'required|max:1024|mimes:png',
+//         ]);
+
+//         //dd($request->image);
+//         $request->image->store('imagesbilder'); 
+//         // storage/app/imagesbilder  hier kommts an!!!!
+//     }
+// });
 
 

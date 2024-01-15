@@ -28,7 +28,7 @@ class PasswordRule implements Rule
      */
     public function message()
     {
-        return 'Das Password Format stimmt nicht. Das Passwort muss aus midnestens acht Zeichen, einem Groß- einem Kleinbuchstaben einer Zahl und einem der folgenden Sonderzeichen bestehen #?!@$ %^&*-';
+        return 'Das Password Format stimmt nicht. Das Passwort muss aus mindestens acht Zeichen, einem Groß- einem Kleinbuchstaben einer Zahl und einem der folgenden Sonderzeichen bestehen #?!@$ %^&*-';
     }
 
 }
