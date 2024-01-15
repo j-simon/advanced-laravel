@@ -16,7 +16,8 @@ class UserPolicy
         
         // // View any users logic
         return auth()->user() === $user ; 
-        //return true; // Adjust as needed
+        //return $auth === $user ; 
+        
     }
 
     public function view(User $user, User $model)

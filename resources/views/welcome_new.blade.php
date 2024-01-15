@@ -29,12 +29,13 @@
                 --}}
                 <div style="padding-left:15px;">
                     {{$post->active}} @if($post->active) ✅ @else ❌ @endif
-                {{-- @can('toggle-post', $post) --}}
-                @canany(['toggle-post', 'always-toggle-post'], $post)
-                <a  href="/post/{{$post->id}}/toggle"></b> kann geändert
+                    {{-- @can('toggle-post', $post) --}}
+                    @canany(['toggle-post', 'always-toggle-post'], $post)
+                    <a href="/post/{{$post->id}}/toggle">
+            </b> kann geändert
             werden</a>
-                @endcan
-                </div>
+            @endcan
+            </div>
         </td>
 
 
@@ -45,4 +46,8 @@
 @can('delete-user','App\Models\User')
 <a href="/user/{{auth()->user()->id}}/delete">Account loschen</a>
 @endcan
+
+<a href="/zeigeUploadFormular">Bild-Upload</a><br>
+<a href="/zeigeUploadBildAn">hochgeladenes Bild anzeigen</a><br>
+<a href="/zeigeAlleBilderAn">alle Bilder anzeigen</a>
 @endsection
