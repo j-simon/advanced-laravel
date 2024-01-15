@@ -42,10 +42,12 @@ class AuthServiceProvider extends ServiceProvider
             }
         });
 
-        // Gate::define('delete-user', function (\App\Models\User $auth, \App\Models\User $user) {
-        //     return $auth->is($user)
-        //     ? Response::allow()
-        //     : Response::deny('You cannot delete this User because its not yours');
-        // });
+        Gate::define('delete-user', function (\App\Models\User $auth, $user) {
+            //echo $auth->id,$user->id;
+            //dump ($auth->abilities());
+            return $auth->id === $user->id || $auth->abilities()->contains('delete-user') 
+            ? Response::allow()
+            : Response::deny('You cannot delete this User because its not yours');
+        });
     }
 }

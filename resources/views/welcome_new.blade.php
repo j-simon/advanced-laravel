@@ -43,11 +43,13 @@
     @endforeach
 </table>
 <br><br>
-@can('delete-user','App\Models\User')
-<a href="/user/{{auth()->user()->id}}/delete">Account loschen</a>
-@endcan
+
 
 <a href="/zeigeUploadFormular">Bild-Upload</a><br>
 <a href="/zeigeUploadBildAn">hochgeladenes Bild anzeigen</a><br>
-<a href="/zeigeAlleBilderAn">alle Bilder anzeigen</a>
+<a href="/zeigeAlleBilderAn">alle Bilder anzeigen</a><br><br>
+<h4> Übungen 12 und 13</h4>
+<a href="/upload">Bild-Upload Übung12</a><br>
+<a href="/upload_uebung_13">Bild-Upload Übung13</a><br>
+
 @endsection

@@ -144,16 +144,7 @@ Route::get('post/{post}/toggle', function (App\Models\Post $post) {
 
     return redirect('/');
 
-    // Route::get('user/{user}/delete', function (App\Models\User $user) {
-    //     if (Gate::none(['delete-user', 'delete-other-users'], $user)) {
-    //         abort(403);
-    //     }
-    //     $user->oauth()->delete();
-    //     $user->delete();
-
-    //     return redirect('/');
-    // });
-
+  
 });
 
 
@@ -214,4 +205,60 @@ Route::get("bildLoeschen/public/{bild}", function ($bild) {
 
     return redirect("/zeigeAlleBilderAn");
     
+});
+
+
+// uebung_12
+// eine Route für das Upload-Formular
+Route::get('/upload', function () {
+    return view('upload');
+});
+
+// und noch eine für die POST-Action:
+Route::post('upload', function (Request $request) {
+
+    if ($request->file('image')->isValid()) {
+
+        $request->validate([
+            'image' => 'required|max:1024|mimes:png',
+        ]);
+
+        //dd($request->image);
+        $request->image->store('imagesbilder'); 
+        // storage/app/imagesbilder  hier kommts an!!!!
+    }
+});
+
+// uebung_13
+// use Illuminate\Support\Facades\Storage;
+
+Route::get('upload_uebung_13/', function () {
+    $path = 'public/'.auth()->user()->id;
+    Storage::makeDirectory($path);
+    $files = Storage::allFiles($path);
+    $directories = Storage::allDirectories($path);
+
+    return view('upload_uebung_13', compact('files', 'directories'));
+});
+
+
+Route::post('directory', function (Request $request) {
+    $path = 'public/'.auth()->user()->id;
+    Storage::makeDirectory($path.'/'.$request->directory);
+
+    return redirect('upload_uebung_13/');
+});
+
+
+Route::post('upload_uebung_13', function (Request $request) {
+    $path = 'public/'.auth()->user()->id;
+    if ($request->file('image')->isValid()) {
+        $request->validate([
+            'image' => 'required|max:1024|mimes:png',
+        ]);
+
+        Storage::putFile($path, $request->image);
+        
+        return redirect('/upload_uebung_13');
+    }
 });
