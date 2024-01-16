@@ -16,3 +16,4 @@ yarn-error.log
 /.idea
 /.vscode
 slack_webhook.txt
+/config/filesystems.php

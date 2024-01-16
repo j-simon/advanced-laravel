@@ -102,6 +102,14 @@ Route::get("/produkte_anlegen", function () {
             "active" => true
         ]
     );
+    \App\Models\Post::create(
+        [
+            'title' => "Ente",
+            "text" => "Schöne Ente für 13 EURO",
+            "user_id" => 3,
+            "active" => true
+        ]
+    );
 });
 
 
@@ -115,8 +123,8 @@ Route::get('/', function (Request $request) {
     //Log::channel('slack')->info("IP-Adresse: ".$request->ip());
     //logger()->channel('daily')->critical("IP-Adresse: ".request()->ip());
 
-    $posts = \App\Models\Post::all();
-    //$posts = \App\Models\Post::with('user')->get(); // eager loading -> N+1 Problem wird verbessert!
+    //$posts = \App\Models\Post::all();
+    $posts = \App\Models\Post::with('user')->get(); // eager loading -> N+1 Problem wird verbessert!
     
     return view('welcome_new', compact("posts"));
 });
@@ -210,6 +218,15 @@ Route::get("bildLoeschen/public/{bild}", function ($bild) {
 });
 
 
+Route::get('/sft_server_als_storage', function () {
+    $alleDateien = Storage::disk('sftp')->files("Bilder");
+
+    foreach($alleDateien as $datei)
+        echo $datei."<br>";
+
+    //return view('welcome');
+});
+
 // uebung_12
 // eine Route für das Upload-Formular
 Route::get('/upload', function () {
@@ -217,7 +234,7 @@ Route::get('/upload', function () {
 });
 
 // und noch eine für die POST-Action:
-Route::post('upload', function (Request $request) {
+Route::post('/upload', function (Request $request) {
 
     if ($request->file('image')->isValid()) {
 
@@ -226,7 +243,7 @@ Route::post('upload', function (Request $request) {
         ]);
 
         //dd($request->image);
-        $request->image->store('imagesbilder'); 
+        $request->image->store('public/imagesbilder'); 
         // storage/app/imagesbilder  hier kommts an!!!!
     }
 });
@@ -253,7 +270,7 @@ Route::post('directory', function (Request $request) {
 
 
 Route::post('upload_uebung_13', function (Request $request) {
-    $path = 'public/'.auth()->user()->id;
+    $path = 'public/'.auth()->user()->id."/bilder";
     if ($request->file('image')->isValid()) {
         $request->validate([
             'image' => 'required|max:1024|mimes:png',
@@ -263,4 +280,67 @@ Route::post('upload_uebung_13', function (Request $request) {
         
         return redirect('/upload_uebung_13');
     }
+});
+
+// uebung_19
+use App\Mail\Quote;
+use App\Mail\Image;
+use App\Mail\Inspire;
+
+// uebung_19 mails ansehen und uebung_20 senden per mailer aus env
+use Illuminate\Support\Facades\Mail;
+Route::get('/ansicht_im_browser', function () {
+
+    // die 3 Versionen nacheinander ausprobieren,
+    // jeweils die return statements in-/auskommntieren
+    
+    // 1 uebung_15 und 16
+    $mail = new Quote();
+        
+    // echo "<br>"; // oder: return new Quote();
+
+    // echo $mail->render(); 
+    // echo "<br>"; 
+	// // Mail::to('test@test.de')->send(new Quote());
+
+    
+		
+    // 2
+    $quote = 'coffee in the morning saves your life';
+    $author = 'wise old man';
+    // Mail::to('test@test.de')->send(new Inspire($quote, $author));
+   //return new Inspire($quote, $author);
+   
+    // 3
+     Mail::to('test@test.de')->send(new Image()); // mailtrap OK
+     #Mail::to('jens.simon@gmx.net')->send(new Image()); // fuer gmx
+    return new Image();
+    
+  
+
+});
+use App\Mail\Newsletter;
+use App\Mail\NewsletterPersoenlich;
+use App\Notifications\FirmaNotification;
+
+
+Route::get("/sende_newsletter_mail",function(){
+
+   //return new Newsletter();
+   // mail empfaenger und inhalt 
+
+  // Mail::to("jens.simon@gmx.net")->send(new Newsletter);
+   //Mail::to("jens.simon2@gmx.net")->send(new Newsletter);
+
+   Mail::to("jens.simon2@gmx.net")
+   ->cc("jens.simon@gmx.net")
+   ->bcc("jens.simon2@gmx.net")
+   ->send(new NewsletterPersoenlich("Jens"));
+});
+
+use Illuminate\Support\Facades\Notification;
+
+Route::get("/sende_notification",function(){
+    auth()->loginUsingId(1);
+    Notification::send(auth()->user(),new FirmaNotification);
 });

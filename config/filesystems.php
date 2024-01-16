@@ -46,13 +46,12 @@ return [
 
         'sftp' => [
             'driver' => 'sftp',
-            'host' => 'jenssi.lima-ftp.de',
-           // 'port' => 21,
-            'username' => 'jenssi',
-            'password' => "",
-            //'privateKey' => 'path/to/or/contents/of/privatekey',
-             'root' => '/default-website/test',
-            //'timeout' => 10,
+            'host' => "",
+            'username' => "",
+            'port' => env('FTP_PORT', 22),
+            'root' => '/home/jensimon',
+
+             'password' => '',// password einsetzen!
         ],
 
         's3' => [

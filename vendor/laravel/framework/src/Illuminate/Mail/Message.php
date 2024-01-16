@@ -337,10 +337,12 @@ class Message
      */
     public function embed($file)
     {
+        
         if ($file instanceof Attachable) {
             $file = $file->toMailAttachment();
+            dd($file);
         }
-
+        
         if ($file instanceof Attachment) {
             return $file->attachWith(
                 function ($path) use ($file) {
@@ -367,7 +369,7 @@ class Message
         $this->message->addPart(
             (new DataPart(new File($file), $cid))->asInline()
         );
-
+        
         return "cid:$cid";
     }
 
