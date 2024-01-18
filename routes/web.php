@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\Kauf;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -16,10 +17,13 @@ use Illuminate\Support\Facades\Log;
 
 
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PostController;
+use App\Jobs\ConfirmUpload;
+use App\Jobs\Exception;
 use App\Jobs\LogAusgabe;
 
 Route::resource('users', UserController::class);
-
+Route::resource('posts', PostController::class);
 
 // MVC Impressum-Seite:
 // hier wird unsichtbar in einer before middleware
@@ -237,9 +241,13 @@ Route::post('/upload', function (Request $request) {
             'image' => 'required|max:1024|mimes:png',
         ]);
 
+       
         //dd($request->image);
         $request->image->store('public/imagesbilder');
         // storage/app/imagesbilder  hier kommts an!!!!
+
+        dispatch( new ConfirmUpload());
+     
     }
 });
 
@@ -248,7 +256,10 @@ Route::post('/upload', function (Request $request) {
 
 Route::get('upload_uebung_13/', function () {
     $path = 'public/' . auth()->user()->id;
-    Storage::makeDirectory($path);
+
+    // dd($path);
+   //Storage::makeDirectory($path);
+    //dd("make ");
     $files = Storage::allFiles($path);
     $directories = Storage::allDirectories($path);
 
@@ -260,7 +271,7 @@ Route::post('directory', function (Request $request) {
     $path = 'public/' . auth()->user()->id;
     Storage::makeDirectory($path . '/' . $request->directory);
 
-    return redirect('upload_uebung_13/');
+    return redirect('/');
 });
 
 
@@ -424,4 +435,39 @@ Route::get("/syncron_test", function () {
     }
 
     return "fertig!";
+});
+
+
+
+
+//uebung_24
+
+Route::get("/aufgabe_24",function(){
+
+
+
+
+    dispatch(function(){
+        logger()->alert("Aufgabe mit queue ausgeführt!");
+    });
+
+
+
+    logger()->alert("Aufgabe ohne queue ausgeführt!");
+
+   
+
+});
+
+
+Route::get("/uebung_26",function(){
+
+    //throw new \Exception;
+    dispatch(new App\Jobs\Exception);
+});
+
+Route::get("/produkt_kaufen/{id}",function($id){
+
+    
+    event(new Kauf($id));
 });

@@ -18,6 +18,15 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+
+        // hier ist die Reihenfolge festlegbar
+        'App\Events\Kauf' => [
+          
+           'App\Listeners\SendeEmailRechnung',
+           'App\Listeners\ZieheGeldEin',
+           'App\Listeners\SendeEmailKauf',
+        ],
+        
     ];
 
     /**
@@ -33,6 +42,8 @@ class EventServiceProvider extends ServiceProvider
      */
     public function shouldDiscoverEvents(): bool
     {
-        return false;
+        return  false ; // keine Automatik
+        // true 
+        // Reihenfolge der Listener wird alphabetisch eingeordnet
     }
 }
