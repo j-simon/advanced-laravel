@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Models\Post;
+use App\Models\User;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,5 +23,6 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         Post::observe(\App\Observers\PostObserver::class);
+        User::observe(\App\Observers\Test2::class);
     }
 }

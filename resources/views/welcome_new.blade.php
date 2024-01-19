@@ -5,6 +5,22 @@
 <br>
 <h4>Posts - mit Gate geschützt - aktiv Status kann nur vom Besitzer geändert werden</h4>
 
+<h5>Post suchen</h5>
+<form action="/posts" method="GET">
+    @csrf
+    Suchbegriff
+    <input type="text" name="search_term">
+    <input type="submit" value="suchen">
+
+</form>
+<form action="/posts" method="GET">
+    @csrf
+    id
+    <input type="text" name="id">
+    <input type="submit" value="suchen">
+
+</form>
+
 <h5>Neuen Post anlegen</h5>
 <form action="/posts" method="POST">
     @csrf

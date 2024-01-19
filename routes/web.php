@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\Kauf;
+use App\Events\OrderCompleted;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -241,13 +242,12 @@ Route::post('/upload', function (Request $request) {
             'image' => 'required|max:1024|mimes:png',
         ]);
 
-       
+
         //dd($request->image);
         $request->image->store('public/imagesbilder');
         // storage/app/imagesbilder  hier kommts an!!!!
 
-        dispatch( new ConfirmUpload());
-     
+        dispatch(new ConfirmUpload());
     }
 });
 
@@ -258,7 +258,7 @@ Route::get('upload_uebung_13/', function () {
     $path = 'public/' . auth()->user()->id;
 
     // dd($path);
-   //Storage::makeDirectory($path);
+    //Storage::makeDirectory($path);
     //dd("make ");
     $files = Storage::allFiles($path);
     $directories = Storage::allDirectories($path);
@@ -326,8 +326,11 @@ Route::get('/ansicht_im_browser', function () {
 
 use App\Mail\Newsletter;
 use App\Mail\NewsletterPersoenlich;
+use App\Models\User;
 use App\Notifications\FirmaNotification;
 use App\Notifications\NewsletterNotification;
+
+use App\Services\PostService;
 
 Route::get("/sende_newsletter_mail", function () {
 
@@ -430,8 +433,6 @@ Route::get("/syncron_test", function () {
 
 
         dispatch(new LogAusgabe($i))->delay(5)->onQueue('hoheprioritaet');
-
-       
     }
 
     return "fertig!";
@@ -442,32 +443,114 @@ Route::get("/syncron_test", function () {
 
 //uebung_24
 
-Route::get("/aufgabe_24",function(){
+Route::get("/aufgabe_24", function () {
 
 
 
 
-    dispatch(function(){
+    dispatch(function () {
         logger()->alert("Aufgabe mit queue ausgeführt!");
     });
 
 
 
     logger()->alert("Aufgabe ohne queue ausgeführt!");
-
-   
-
 });
 
 
-Route::get("/uebung_26",function(){
+Route::get("/uebung_26", function () {
 
     //throw new \Exception;
     dispatch(new App\Jobs\Exception);
 });
 
-Route::get("/produkt_kaufen/{id}",function($id){
+Route::get("/produkt_kaufen/{id}", function ($id) {
 
-    
+
     event(new Kauf($id));
+});
+
+Route::get("test_service_1", function (PostService $postService) {
+    dump($postService);
+});
+
+
+Route::get("test_service_2", function () {
+    $postService = new PostService();
+    dump($postService);
+});
+
+
+Route::get("/ordercompleted", function () {
+    event(new OrderCompleted);
+    return "Event OrderCompleted ausgelöst!";
+});
+
+
+
+use App\Services\Auto;
+
+Route::get("/auto", function () {
+
+    $car = new Auto();
+    $car->setFarbe("rot");
+    dump($car);
+});
+
+
+use Illuminate\Support\Facades\Http;
+
+Route::get("/http_client_test", function (Auto $car, User $user) {
+
+    // $response = Http::get('https://world.openfoodfacts.org/api/v2/product/%204025700001030.json');
+    // $schokolade=json_decode($response->body());
+    // //dd($schokolade->product->image_front_small_url);
+
+    // echo "<img src='".$schokolade->product->image_front_small_url."'>";
+
+
+    $response = Http::get('http://routinglaravel.test:8000/certificates/1');
+
+    dump(json_decode($response->body()));
+});
+
+/* 
+	uebung_31
+*/
+
+use App\Exceptions\CalcException;
+
+Route::get('calc', function () {
+    throw new CalcException(); // ohne Nachricht
+
+    throw new CalcException('huups da gab es einen fehler!'); // mit Nachricht
+
+});
+
+/* 
+	uebung_32:
+*/
+
+
+Route::get('product', function () {
+    return view('product-search');
+});
+
+Route::post('product', function (Request $request) {
+    $request->validate([
+        'barcode' => 'required',
+    ]);
+
+    // uebung_32
+    //$response = Http::get('https://de.openfoodfacts.org/api/v0/product/'.$request->barcode);
+
+    // diese eine Zeile ist uebung_33!!!!!!!!!!!
+    $response = cache()->rememberForever("product.{$request->barcode}", function () {
+        return Http::beforeSending(function () {
+            info('Anfrage bezüglich des Barcodes' . request()->barcode . ' gesendet.');
+        })->get('https://de.openfoodfacts.org/api/v0/product/' . request()->barcode)->json();
+    });
+
+    //dd($response->json());
+    return view('product-search', compact('response'));
 });

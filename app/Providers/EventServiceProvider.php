@@ -26,6 +26,13 @@ class EventServiceProvider extends ServiceProvider
            'App\Listeners\ZieheGeldEin',
            'App\Listeners\SendeEmailKauf',
         ],
+
+        'App\Events\OrderCompleted' => [
+          
+           
+            'App\Listeners\PrepareCurrywurst@handle',
+            'App\Listeners\GenerateInvoice@handle',
+         ],
         
     ];
 
